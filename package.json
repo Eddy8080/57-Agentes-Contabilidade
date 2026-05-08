@@ -1,0 +1,9 @@
+{
+  "name": "57-agents-contabilidade",
+  "version": "1.0.0",
+  "description": "57 Agents Contabilidade - Interface Desktop",
+  "scripts": {
+    "start": "npm start --prefix interface",
+    "build": "powershell -ExecutionPolicy Bypass -File build.ps1"
+  }
+}

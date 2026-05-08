@@ -10,7 +10,7 @@ Os agentes funcionam de forma automática (o Claude Code delega para o especiali
 
 ## DigIAna — Interface Desktop
 
-![DigIAna — Interface desktop com painel de detalhe e terminal Claude Code integrado](docs/screenshot.jpg)
+![DigIAna — Interface desktop com painel de detalhe e terminal Claude Code integrado](screenshot.jpg)
 
 **DigIAna** é a interface gráfica do projeto: uma janela Electron frameless que exibe os 57 agentes em cards visuais e integra um terminal PTY real (PowerShell + Claude Code) para uso direto no escritório.
 

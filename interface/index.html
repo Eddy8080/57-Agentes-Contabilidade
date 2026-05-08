@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+  <title>57 Agents Contabilidade</title>
+
+  <!-- xterm.js CSS (instalado via npm) -->
+  <link rel="stylesheet" href="./node_modules/xterm/css/xterm.css">
+
+  <!-- Estilos da interface -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════
+       HEADER — barra de título frameless (arrastável)
+  ══════════════════════════════════════════════════════ -->
+  <header id="app-header">
+
+    <div id="header-drag">
+      <div id="header-logo">
+        <span id="header-icon">⚡</span>
+        <span id="header-title">DigIAna 57 Agents Contabilidade</span>
+      </div>
+      <div id="header-status">
+        <span id="status-dot" class="dot-loading"></span>
+        <span id="status-text">Iniciando claude...</span>
+      </div>
+    </div>
+
+    <button id="btn-terminal-toggle" title="Mostrar/Ocultar Terminal (T)">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+        <path d="M2 4l5 4-5 4M8 12h6" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Terminal
+    </button>
+
+    <!-- Botões de controle da janela (substitui barra nativa) -->
+    <div id="window-controls">
+      <button class="wc-btn" id="btn-minimize"
+              onclick="window.windowControls.minimize()" title="Minimizar">
+        <svg width="10" height="2" viewBox="0 0 10 2"><rect width="10" height="1.5" y="0.25" fill="currentColor"/></svg>
+      </button>
+      <button class="wc-btn" id="btn-maximize"
+              onclick="window.windowControls.maximize()" title="Maximizar">
+        <svg width="10" height="10" viewBox="0 0 10 10"><rect width="9" height="9" x="0.5" y="0.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+      <button class="wc-btn wc-close" id="btn-close"
+              onclick="window.windowControls.close()" title="Fechar">
+        <svg width="10" height="10" viewBox="0 0 10 10">
+          <line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </button>
+    </div>
+
+  </header>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       CORPO — sidebar + área principal
+  ══════════════════════════════════════════════════════ -->
+  <div id="app-body">
+
+    <!-- ── SIDEBAR ──────────────────────────────────── -->
+    <aside id="sidebar">
+
+      <nav id="sidebar-filters">
+        <button class="cat-btn active" data-cat="0">
+          Todos
+          <span class="cat-count">57</span>
+        </button>
+        <button class="cat-btn" data-cat="1">
+          <span class="cat-dot" style="background:#f78166"></span>
+          Apuração &amp; Tributário
+          <span class="cat-count">5</span>
+        </button>
+        <button class="cat-btn" data-cat="2">
+          <span class="cat-dot" style="background:#d2a8ff"></span>
+          Obrigações Acessórias
+          <span class="cat-count">5</span>
+        </button>
+        <button class="cat-btn" data-cat="3">
+          <span class="cat-dot" style="background:#79c0ff"></span>
+          Folha &amp; DP
+          <span class="cat-count">5</span>
+        </button>
+        <button class="cat-btn" data-cat="4">
+          <span class="cat-dot" style="background:#56d364"></span>
+          Conciliação &amp; Financeiro
+          <span class="cat-count">4</span>
+        </button>
+        <button class="cat-btn" data-cat="5">
+          <span class="cat-dot" style="background:#ffa657"></span>
+          Atendimento ao Cliente
+          <span class="cat-count">4</span>
+        </button>
+        <button class="cat-btn" data-cat="6">
+          <span class="cat-dot" style="background:#e3b341"></span>
+          Operação Interna
+          <span class="cat-count">4</span>
+        </button>
+        <button class="cat-btn" data-cat="7">
+          <span class="cat-dot" style="background:#8b949e"></span>
+          Especializações
+          <span class="cat-count">30</span>
+        </button>
+      </nav>
+
+      <div id="sidebar-search">
+        <div id="search-wrapper">
+          <svg id="search-icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <circle cx="6.5" cy="6.5" r="5" stroke="#8b949e" stroke-width="1.5"/>
+            <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="#8b949e" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input type="text" id="search-input"
+                 placeholder="Buscar agente..."
+                 autocomplete="off"
+                 spellcheck="false">
+          <button id="search-clear" class="hidden" title="Limpar busca">✕</button>
+        </div>
+      </div>
+
+    </aside>
+
+
+    <!-- ── ÁREA PRINCIPAL ──────────────────────────── -->
+    <main id="main-content">
+
+      <!-- Grid de cards (preenchido por app.js) -->
+      <div id="cards-container"></div>
+
+      <!-- Painel de detalhe — desliza sobre o grid ao clicar num card -->
+      <div id="detail-panel" class="hidden" role="dialog" aria-modal="true">
+
+        <div id="detail-header">
+          <div id="detail-title-block">
+            <span id="detail-number"></span>
+            <h2 id="detail-name"></h2>
+            <code id="detail-slug"></code>
+            <span id="detail-category-badge"></span>
+          </div>
+          <button id="detail-close" title="Fechar painel (Esc)">✕</button>
+        </div>
+
+        <div id="detail-body">
+
+          <section class="detail-section">
+            <h3 class="section-label">O QUE FAZ</h3>
+            <p id="detail-what"></p>
+          </section>
+
+          <section class="detail-section">
+            <h3 class="section-label label-trigger">QUANDO ACIONAR</h3>
+            <ul id="detail-trigger"></ul>
+          </section>
+
+          <section class="detail-section" id="detail-notfor-section">
+            <h3 class="section-label label-danger">NÃO USE PARA</h3>
+            <ul id="detail-notfor"></ul>
+          </section>
+
+          <section class="detail-section">
+            <h3 class="section-label">O QUE ENTREGA</h3>
+            <ul id="detail-delivery"></ul>
+          </section>
+
+          <section class="detail-section detail-invoke">
+            <h3 class="section-label label-invoke">COMO INVOCAR</h3>
+            <div id="detail-invoke-box">
+              <code id="detail-invoke-text"></code>
+            </div>
+            <div id="detail-actions">
+              <button id="btn-copy" class="action-btn secondary">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                  <rect x="5" y="1" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+                  <path d="M3 4H2a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1v-1" stroke="currentColor" stroke-width="1.4"/>
+                </svg>
+                Copiar comando
+              </button>
+              <button id="btn-send" class="action-btn primary">
+                Enviar ao terminal
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 2v10M3 7l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TERMINAL FLUTUANTE — janela arrastável
+  ══════════════════════════════════════════════════════ -->
+  <div id="terminal-float" class="hidden">
+    <div id="tf-header">
+      <div id="tf-drag-area">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <path d="M2 4l5 4-5 4M8 12h6" stroke="#56d364" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Terminal — Claude Code
+      </div>
+      <div id="tf-controls">
+        <button class="tf-btn" id="tf-minimize" title="Minimizar">─</button>
+        <button class="tf-btn tf-close" id="tf-close-btn" title="Fechar">✕</button>
+      </div>
+    </div>
+    <div id="tf-body">
+      <div id="xterm-mount"></div>
+    </div>
+    <div id="tf-resize-handle"></div>
+  </div>
+
+
+  <!-- Toast de feedback (copiar, enviar) -->
+  <div id="toast" class="hidden" role="status" aria-live="polite"></div>
+
+
+  <!-- ─── Scripts ─── -->
+  <!-- xterm.js (instalado via npm install na pasta interface/) -->
+  <script src="./node_modules/xterm/lib/xterm.js"></script>
+  <script src="./node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+
+  <!-- Dados dos 57 agentes -->
+  <script src="agents-data.js"></script>
+
+  <!-- Lógica da interface -->
+  <script src="app.js"></script>
+
+</body>
+</html>

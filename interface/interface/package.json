@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "57-agents-interface": "file:.."
+  }
+}
