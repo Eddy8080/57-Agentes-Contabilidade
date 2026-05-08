@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@homebridge/node-pty-prebuilt-multiarch": "^0.11.14",
+    "57-agents-contabilidade": "file:..",
     "xterm": "^5.3.0",
     "xterm-addon-fit": "^0.8.0"
   },
@@ -23,6 +24,8 @@
     "appId": "br.com.anagma.57agents",
     "productName": "57 Agents Contabilidade",
     "copyright": "Copyright © 2025 Anagma",
+    "icon": "../build/assets/icon.ico",
+    "npmRebuild": false,
     "directories": {
       "output": "../dist"
     },
@@ -30,7 +33,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ]
     },

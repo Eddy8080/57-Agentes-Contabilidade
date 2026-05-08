@@ -24,14 +24,39 @@ Write-Host "  57 Agents Contabilidade - Build               " -ForegroundColor C
 Write-Host "=================================================" -ForegroundColor Cyan
 Write-Host ""
 
+# ── 0. Gerar icone se nao existir ───────────────────────────
+$IconIco      = Join-Path $Root "build\assets\icon.ico"
+$IconScript   = Join-Path $Root "build\generate-icon.py"
+if (-not (Test-Path $IconIco)) {
+    if (Test-Path $IconScript) {
+        Write-Host "[0/4] Gerando icone (build\assets\icon.ico)..." -ForegroundColor Yellow
+        python $IconScript
+        if ($LASTEXITCODE -ne 0) { Write-Warning "Falha ao gerar icone — build continua sem ele." }
+    } else {
+        Write-Warning "icon.ico nao encontrado e generate-icon.py ausente — build continua sem icone."
+    }
+}
+
 # ── 1. npm install ──────────────────────────────────────────
-Write-Host "[1/3] Instalando dependencias..." -ForegroundColor Yellow
+Write-Host "[1/4] Instalando dependencias..." -ForegroundColor Yellow
 npm install --prefix $InterfaceDir
 if ($LASTEXITCODE -ne 0) { Write-Error "npm install falhou"; exit 1 }
 
+# Verifica binario nativo do node-pty (deve ser compilado antes do build)
+$PtyBinary = Join-Path $InterfaceDir "node_modules\@homebridge\node-pty-prebuilt-multiarch\build\Release\pty.node"
+if (-not (Test-Path $PtyBinary)) {
+    Write-Host ""
+    Write-Host "ERRO: pty.node nao encontrado." -ForegroundColor Red
+    Write-Host "Execute primeiro:" -ForegroundColor Yellow
+    Write-Host "  interface\rebuild-native.bat" -ForegroundColor White
+    Write-Host "Depois rode .\build.ps1 novamente." -ForegroundColor Yellow
+    exit 1
+}
+Write-Host "Binario nativo pty.node: OK" -ForegroundColor Green
+
 # ── 2. Empacotar com electron-builder --dir ─────────────────
 Write-Host ""
-Write-Host "[2/3] Empacotando com electron-builder (--dir)..." -ForegroundColor Yellow
+Write-Host "[2/4] Empacotando com electron-builder (--dir)..." -ForegroundColor Yellow
 npm run build:dir --prefix $InterfaceDir
 if ($LASTEXITCODE -ne 0) { Write-Error "electron-builder falhou"; exit 1 }
 
@@ -47,9 +72,19 @@ if (-not $UnpackedDir) {
 }
 Write-Host "App empacotado em: $UnpackedDir" -ForegroundColor Green
 
+# ── Assets visuais do Inno Setup ────────────────────────────
+$BannerBmp    = Join-Path $Root "build\assets\banner.bmp"
+$LogoSmallBmp = Join-Path $Root "build\assets\logo_small.bmp"
+if (-not (Test-Path $BannerBmp))    { Write-Warning "banner.bmp nao encontrado em build\assets\ — WizardImageFile sera omitido do .iss" }
+if (-not (Test-Path $LogoSmallBmp)) { Write-Warning "logo_small.bmp nao encontrado em build\assets\ — WizardSmallImageFile sera omitido do .iss" }
+
+$wizardImageLine      = if (Test-Path $BannerBmp)    { "WizardImageFile=$BannerBmp" }       else { "" }
+$wizardSmallImageLine = if (Test-Path $LogoSmallBmp) { "WizardSmallImageFile=$LogoSmallBmp" } else { "" }
+$setupIconLine        = if (Test-Path $IconIco)       { "SetupIconFile=$IconIco" }            else { "" }
+
 # ── 3. Gerar 57agents.iss ───────────────────────────────────
 Write-Host ""
-Write-Host "[3/3] Gerando 57agents.iss..." -ForegroundColor Yellow
+Write-Host "[3/4] Gerando 57agents.iss..." -ForegroundColor Yellow
 
 $issContent = @"
 ; ================================================================
@@ -69,15 +104,19 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher={#AppPublisher}
 AppPublisherURL=https://anagma.com.br
-DefaultDirName={localappdata}\{#AppName}
+DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 OutputDir=$DistDir
 OutputBaseFilename=57AgentsContabilidade-Setup-v{#AppVersion}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+$wizardImageLine
+$wizardSmallImageLine
+$setupIconLine
 ArchitecturesInstallIn64BitMode=x64
-PrivilegesRequired=lowest
+ArchitecturesAllowed=x64
+PrivilegesRequired=admin
 UninstallDisplayName={#AppName}
 
 [Languages]
@@ -90,9 +129,9 @@ Name: "desktopicon"; Description: "Criar atalho na Area de Trabalho"; GroupDescr
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{#AppName}";           Filename: "{app}\{#AppExe}"
+Name: "{group}\{#AppName}";             Filename: "{app}\{#AppExe}"; IconFilename: "{app}\{#AppExe}"
 Name: "{group}\Desinstalar {#AppName}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\{#AppName}";     Filename: "{app}\{#AppExe}"; Tasks: desktopicon
+Name: "{autodesktop}\{#AppName}";       Filename: "{app}\{#AppExe}"; IconFilename: "{app}\{#AppExe}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#AppExe}"; Description: "Iniciar {#AppName}"; Flags: nowait postinstall skipifsilent
@@ -101,7 +140,7 @@ Filename: "{app}\{#AppExe}"; Description: "Iniciar {#AppName}"; Flags: nowait po
 Set-Content -Path $IssFile -Value $issContent -Encoding UTF8
 Write-Host "Gerado: $IssFile" -ForegroundColor Green
 
-# ── Compilar com Inno Setup se instalado ────────────────────
+# ── 4. Compilar com Inno Setup se instalado ─────────────────
 $iscc = (Get-Command iscc -ErrorAction SilentlyContinue)?.Source
 $isccPaths = @(
     "C:\Program Files (x86)\Inno Setup 6\ISCC.exe",
@@ -115,7 +154,7 @@ foreach ($p in $isccPaths) {
 
 Write-Host ""
 if ($iscc) {
-    Write-Host "Inno Setup encontrado. Compilando instalador..." -ForegroundColor Yellow
+    Write-Host "[4/4] Compilando instalador com Inno Setup..." -ForegroundColor Yellow
     & $iscc $IssFile
     if ($LASTEXITCODE -eq 0) {
         Write-Host ""

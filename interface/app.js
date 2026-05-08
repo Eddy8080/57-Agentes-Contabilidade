@@ -262,7 +262,6 @@
   function sendToTerminal() {
     if (!selectedAgent || !window.terminal) return;
 
-    const needsCls   = termNeedsCls;
     const wasVisible = termVisible;
     const cmd        = selectedAgent.invokeCmd; // captura ANTES do closeDetail()
     termNeedsCls = false;
@@ -271,21 +270,22 @@
     closeDetail(); // zera selectedAgent — cmd já está salvo acima
     showToast('Comando enviado ao terminal ↓');
 
-    const delay = wasVisible ? 0 : 300;
-
-    if (needsCls) {
+    if (wasVisible) {
+      // Ctrl+C interrompe geração em andamento; /clear limpa a tela dentro do Claude Code
+      window.terminal.send('\x03');
       setTimeout(() => {
-        window.terminal.send('cls\r');
+        window.terminal.send('\r/clear\r');
         setTimeout(() => {
           window.terminal.send(cmd);
           if (termInstance) termInstance.focus();
-        }, 300);
-      }, delay);
+        }, 600);
+      }, 250);
     } else {
+      // Terminal estava oculto → aguarda animação de abertura
       setTimeout(() => {
         window.terminal.send(cmd);
         if (termInstance) termInstance.focus();
-      }, delay);
+      }, 300);
     }
   }
 
