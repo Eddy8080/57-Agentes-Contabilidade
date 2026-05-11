@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual 57 Agents - Contabilidade</title>
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
+            position: fixed;
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            z-index: 100;
+        }
+
+        .sidebar h2 {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+        }
+
+        .sidebar nav ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar nav ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            display: block;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .sidebar nav ul li a:hover {
+            background-color: #f1f5f9;
+            color: var(--secondary-color);
+        }
+
+        .sidebar nav ul li a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            padding: 2rem 4rem;
+            max-width: 1200px;
+        }
+
+        header {
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .intro {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: sticky;
+            top: 2rem;
+            z-index: 90;
+            margin-bottom: 3rem;
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 1rem 0;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #searchInput:focus {
+            border-color: var(--secondary-color);
+        }
+
+        /* Categories and Cards */
+        .category-section {
+            margin-bottom: 4rem;
+        }
+
+        .category-section h2 {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 2rem;
+        }
+
+        .agent-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .agent-number {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .agent-card h3 {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .agent-slug {
+            display: inline-block;
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .agent-info-group {
+            margin-bottom: 1rem;
+        }
+
+        .agent-info-label {
+            font-weight: bold;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .agent-info-content {
+            font-size: 0.95rem;
+        }
+
+        .no-use {
+            color: var(--danger-color);
+        }
+
+        .invoke-code {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: auto;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Pipelines Table */
+        .pipelines-section {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-top: 4rem;
+        }
+
+        .pipelines-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .pipelines-table th,
+        .pipelines-table td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pipelines-table th {
+            background-color: #f8fafc;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .pipeline-sequence {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 2rem;
+            }
+
+            .agents-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Highlight matching search terms */
+        .highlight {
+            background-color: yellow;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <h2>57 Agents</h2>
+        <nav>
+            <ul>
+                <li><a href="#cat1">1 — Apuração & Tributário</a></li>
+                <li><a href="#cat2">2 — Obrigações Acessórias</a></li>
+                <li><a href="#cat3">3 — Folha & DP</a></li>
+                <li><a href="#cat4">4 — Conciliação & Financeiro</a></li>
+                <li><a href="#cat5">5 — Atendimento ao Cliente</a></li>
+                <li><a href="#cat6">6 — Operação Interna</a></li>
+                <li><a href="#cat7">7 — Especializações</a></li>
+                <li><a href="#pipelines">Pipelines Recomendados</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <h1>Manual 57 Agents Contabilidade</h1>
+            <p class="intro">Referência completa de todos os agentes — o que cada um faz, quando acionar e o que
+                entregam.</p>
+
+            <div class="search-container">
+                <input type="text" id="searchInput"
+                    placeholder="Pesquisar por nome, número, slug ou tarefa (ex: 'férias', 'DAS', '01')...">
+            </div>
+        </header>
+
+        <!-- CATEGORIA 1 -->
+        <section id="cat1" class="category-section">
+            <h2>CATEGORIA 1 — APURAÇÃO & TRIBUTÁRIO (01–05)</h2>
+            <div class="agents-grid">
+                <!-- 01 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">01</span>
+                    </div>
+                    <h3>DAS Simples Nacional</h3>
+                    <span class="agent-slug">apuracao-simples-nacional</span>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Apuração mensal do DAS para empresas optantes pelo Simples
+                            Nacional. Calcula receitas segregadas por anexo (I a V), aplica alíquota efetiva, considera
+                            RBT12 e fator R.</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Enviar faturamento de empresa optante para gerar o DAS;
+                            Mencionar PGDAS-D, alíquota efetiva, RBT12, Anexo I-V, fator R ou sublimite estadual.</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">NÃO use para</span>
+                        <div class="agent-info-content no-use">MEI (use 28-apuracao-mei)</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Tabela de receitas segregadas + cálculo passo a passo em Python
+                            + alíquota efetiva justificada + DAS por anexo.</div>
+                    </div>
+
+                    <div class="invoke-code">
+                        "use o agente apuracao-simples-nacional para apurar o DAS de [mês/ano] do cliente [nome]"
+                    </div>
+                </div>
+
+                <!-- 02 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">02</span>
+                    </div>
+                    <h3>ICMS / ISS</h3>
+                    <span class="agent-slug">icms-iss</span>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Apuração de ICMS e ISS. Cobre alíquotas internas/interestaduais,
+                            ICMS-ST, DIFAL, retenção ISS pelo tomador e municipalidade competente.</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Apurar ICMS de operação interestadual ou interna; Mencionar
+                            ICMS-ST, MVA, DIFAL, alíquota interestadual; Enquadrar serviço na lista da LC 116 e calcular
+                            ISS.</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">NÃO use para</span>
+                        <div class="agent-info-content no-use">PIS/COFINS (use 03) · SPED Fiscal (use 06)</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Cálculo Python passo a passo + base de cálculo + alíquota
+                            correta + DARF/DAS/DARM gerado.</div>
+                    </div>
+
+                    <div class="invoke-code">
+                        "use o agente icms-iss para calcular o ICMS da NF [número] operação interestadual de [UF] para
+                        [UF]"
+                    </div>
+                </div>
+
+                <!-- 03 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">03</span>
+                    </div>
+                    <h3>PIS / COFINS</h3>
+                    <span class="agent-slug">pis-cofins</span>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Apuração de PIS e COFINS nos regimes cumulativo e
+                            não-cumulativo. Cobre monofásico e exclusão do ICMS da base (Tema 69 STF).</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Apurar PIS/COFINS mensal; Mencionar regime cumulativo,
+                            não-cumulativo, monofásico, exclusão ICMS da base, créditos, EFD-Contribuições.</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">NÃO use para</span>
+                        <div class="agent-info-content no-use">EFD-Contribuições em si (use 32) · Recuperação de
+                            créditos extemporâneos (use 45)</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Cálculo Python + base com exclusões corretas + créditos
+                            identificados + DARF gerado.</div>
+                    </div>
+
+                    <div class="invoke-code">
+                        "use o agente pis-cofins para apurar PIS/COFINS de [mês/ano] do cliente [nome] no regime
+                        [cumulativo/não-cumulativo]"
+                    </div>
+                </div>
+
+                <!-- 04 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">04</span>
+                    </div>
+                    <h3>IRPJ / CSLL</h3>
+                    <span class="agent-slug">irpj-csll</span>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Apuração de IRPJ e CSLL nos regimes Lucro Presumido, Lucro Real
+                            e Lucro Arbitrado. Cobre apuração trimestral × anual com estimativa.</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Apurar IRPJ e CSLL mensais ou trimestrais; Mencionar Lucro
+                            Presumido, Lucro Real, LALUR, balancete de redução, estimativa, adições/exclusões.</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">NÃO use para</span>
+                        <div class="agent-info-content no-use">Análise estratégica de regime (use 44) · Escrituração
+                            ECD/ECF (use 07)</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Cálculo Python + base de cálculo + alíquotas com adicional +
+                            DARFs IRPJ e CSLL.</div>
+                    </div>
+
+                    <div class="invoke-code">
+                        "use o agente irpj-csll para apurar IRPJ e CSLL do trimestre [tri/ano] da empresa [nome] no
+                        Lucro Presumido"
+                    </div>
+                </div>
+
+                <!-- 05 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">05</span>
+                    </div>
+                    <h3>Conferência de Guia</h3>
+                    <span class="agent-slug">conferencia-guia</span>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Conferência cruzada de todas as guias de tributos antes do envio
+                            ao cliente. Compara guias contra declarações e apurações.</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Gerou guias e quer revisão antes de enviar; Mencionar
+                            conferência, batimento, divergência, erro em guia; Preparando fechamento mensal.</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">NÃO use para</span>
+                        <div class="agent-info-content no-use">Apurar tributo (use 01, 02, 03 ou 04)</div>
+                    </div>
+
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Tabela de conferência cruzada + divergências + checklist + plano
+                            de correção (DARF retificador).</div>
+                    </div>
+
+                    <div class="invoke-code">
+                        "use o agente conferencia-guia para revisar todas as guias de [mês/ano] do cliente [nome] antes
+                        do envio"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORIA 2 -->
+        <section id="cat2" class="category-section">
+            <h2>CATEGORIA 2 — OBRIGAÇÕES ACESSÓRIAS (06–10)</h2>
+            <div class="agents-grid">
+                <!-- 06 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">06</span>
+                    </div>
+                    <h3>SPED Fiscal</h3>
+                    <span class="agent-slug">sped-fiscal</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Geração e validação do arquivo EFD-ICMS-IPI. Escrituração de
+                            NFs, apuração de ICMS e IPI. Registros C, D, E.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Gerar e validar arquivo SPED Fiscal mensal; Erro no PVA e
+                            precisa de diagnóstico.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Estrutura do arquivo com blocos preenchidos + plano de correção
+                            + checklist PVA.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente sped-fiscal para montar o arquivo EFD-ICMS-IPI de [mês/ano]"
+                    </div>
+                </div>
+
+                <!-- 07 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">07</span>
+                    </div>
+                    <h3>ECF / ECD</h3>
+                    <span class="agent-slug">ecf-ecd</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">ECD: livro Diário/Razão digital. ECF: apuração de IRPJ/CSLL com
+                            LALUR/LACS digital.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Gerar e transmitir ECD ou ECF anuais; Erro no PVA-ECD ou
+                            PVA-ECF.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Estrutura ECD e ECF preenchida + plano de contas referencial +
+                            checklist.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente ecf-ecd para gerar a ECD do exercício [ano]"</div>
+                </div>
+
+                <!-- 08 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">08</span>
+                    </div>
+                    <h3>DCTFWeb</h3>
+                    <span class="agent-slug">dctfweb</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">DCTFWeb mensal — confessa débitos federais, vincula DARFs pagos
+                            e PER/DCOMP.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Fechou eSocial S-1299 e Reinf R-2099/R-4099 — hora de
+                            transmitir.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Tabela de débitos esperados × confessados + recibo de
+                            transmissão.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente dctfweb para gerar a DCTFWeb de [mês/ano]"</div>
+                </div>
+
+                <!-- 09 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">09</span>
+                    </div>
+                    <h3>EFD-Reinf</h3>
+                    <span class="agent-slug">efd-reinf</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">EFD-Reinf — transmissão dos eventos R-2000 e R-4000 (retenções
+                            INSS e IRRF).</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Fechar competência mensal para gerar a DCTFWeb.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Sequência de eventos transmitidos + recibo de transmissão.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente efd-reinf para enviar os eventos da competência [mês/ano]"
+                    </div>
+                </div>
+
+                <!-- 10 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">10</span>
+                    </div>
+                    <h3>eSocial</h3>
+                    <span class="agent-slug">esocial</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">eSocial — todos os eventos: iniciais, não-periódicos e
+                            periódicos (S-1200, S-2200, etc).</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Transmitir eventos eSocial; Rejeição de evento e precisa de
+                            diagnóstico.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Cronograma de envios + diagnóstico de rejeições + checklist.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente esocial para montar o cronograma de envios de [mês/ano]"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORIA 3 -->
+        <section id="cat3" class="category-section">
+            <h2>CATEGORIA 3 — FOLHA & DEPARTAMENTO PESSOAL (11–15)</h2>
+            <div class="agents-grid">
+                <!-- 11 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">11</span>
+                    </div>
+                    <h3>Holerite</h3>
+                    <span class="agent-slug">holerite</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Emissão e conferência de holerite completo (proventos e
+                            descontos: INSS, IRRF, VT).</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Emitir holerite mensal; Conferir holerite gerado por sistema.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Holerite pronto + cálculo Python passo a passo + checklist.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente holerite para gerar o holerite de [mês/ano]"</div>
+                </div>
+
+                <!-- 12 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">12</span>
+                    </div>
+                    <h3>Férias e 13º Salário</h3>
+                    <span class="agent-slug">ferias-13-salario</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Cálculo de férias (período aquisitivo, abono) e 13º (1ª e 2ª
+                            parcelas).</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Calcular férias ou 13º salário; Médias variáveis de 12 meses.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Cálculo Python + holerite específico + DARF IRRF 13º.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente ferias-13-salario para calcular as férias de [nome]"</div>
+                </div>
+
+                <!-- 13 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">13</span>
+                    </div>
+                    <h3>Rescisão CLT</h3>
+                    <span class="agent-slug">rescisao-clt-calculo</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Cálculo financeiro completo de rescisão CLT por qualquer motivo.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Precisar calcular o TRCT de qualquer funcionário.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">TRCT detalhado + cálculo Python + GRRF.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente rescisao-clt-calculo para calcular a rescisão de [nome]"
+                    </div>
+                </div>
+
+                <!-- 14 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">14</span>
+                    </div>
+                    <h3>INSS / FGTS</h3>
+                    <span class="agent-slug">inss-fgts</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Apuração e recolhimento do INSS empresa e FGTS (via FGTS
+                            Digital).</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Apurar e recolher INSS e FGTS mensais; Conferir cálculo do
+                            sistema.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Cálculo Python + GPS + DAE FGTS + checklist eSocial.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente inss-fgts para apurar GPS e DAE de [mês/ano]"</div>
+                </div>
+
+                <!-- 15 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">15</span>
+                    </div>
+                    <h3>Admissão</h3>
+                    <span class="agent-slug">admissao</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Admissão completa CLT — documentos, eSocial, contrato, CTPS
+                            Digital.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Vai admitir um novo funcionário; Precisa de checklist e prazos.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Checklist completo + minuta de contrato + cronograma.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente admissao para gerar o checklist para admitir [nome]"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORIA 4 -->
+        <section id="cat4" class="category-section">
+            <h2>CATEGORIA 4 — CONCILIAÇÃO & FINANCEIRO (16–19)</h2>
+            <div class="agents-grid">
+                <!-- 16 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">16</span>
+                    </div>
+                    <h3>Conciliação Bancária</h3>
+                    <span class="agent-slug">conciliacao-bancaria</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Match item a item entre extrato bancário (OFX/CSV) e razão
+                            contábil.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Fecha o mês (pré-balancete); Cliente novo com saldos
+                            divergentes.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Espelho de conciliação + lista de pendências + lançamentos.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente conciliacao-bancaria para conciliar o banco [nome]"</div>
+                </div>
+
+                <!-- 17 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">17</span>
+                    </div>
+                    <h3>Cobrança de Honorários</h3>
+                    <span class="agent-slug">cobranca-honorarios</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Cobrança de honorários atrasados — régua escalonada de 5 etapas.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Cliente atrasou pagamento; Precisa de régua de cobrança.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Régua em 5 etapas + 5 modelos prontos + estratégia de protesto.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente cobranca-honorarios para montar a régua do cliente [nome]"
+                    </div>
+                </div>
+
+                <!-- 18 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">18</span>
+                    </div>
+                    <h3>DRE Gerencial</h3>
+                    <span class="agent-slug">dre-gerencial</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">DRE gerencial com margem de contribuição, ponto de equilíbrio e
+                            KPIs.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Tomar decisão de preço ou mix de produtos; Mencionar PE, MC%.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">DRE gerencial estruturada + análise de sensibilidade.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente dre-gerencial para montar a DRE de [mês/ano]"</div>
+                </div>
+
+                <!-- 19 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">19</span>
+                    </div>
+                    <h3>Fluxo de Caixa Projetado</h3>
+                    <span class="agent-slug">fluxo-caixa-projetado</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Fluxo de caixa realizado e projetado com 3 cenários
+                            (otimista/realista/pessimista).</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Cliente com sazonalidade; Necessidade de capital de giro.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Planilha CSV semanal/mensal com 3 cenários e alertas de déficit.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente fluxo-caixa-projetado para projetar o fluxo de [mês]"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORIA 5 -->
+        <section id="cat5" class="category-section">
+            <h2>CATEGORIA 5 — ATENDIMENTO AO CLIENTE (20–23)</h2>
+            <div class="agents-grid">
+                <!-- 20 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">20</span>
+                    </div>
+                    <h3>Triagem WhatsApp</h3>
+                    <span class="agent-slug">triagem-whatsapp</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Classifica mensagens por tipo, área e urgência. Gera respostas
+                            FAQ.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Lote de mensagens recebidas; Precisa de régua de resposta
+                            automática.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Tabela de triagem + 15 templates FAQ + protocolo de SLA.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente triagem-whatsapp para classificar as mensagens de hoje"</div>
+                </div>
+
+                <!-- 21 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">21</span>
+                    </div>
+                    <h3>Documentos Pendentes</h3>
+                    <span class="agent-slug">documentos-pendentes</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Controle de documentos que o cliente precisa enviar (NFs,
+                            extratos).</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Cobrar documentos para fechar o mês; Risco de atrasar obrigação.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Lista de pendências em CSV + régua de cobrança automática.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente documentos-pendentes para listar o que o cliente precisa
+                        enviar"</div>
+                </div>
+
+                <!-- 22 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">22</span>
+                    </div>
+                    <h3>Onboarding Cliente</h3>
+                    <span class="agent-slug">onboarding-cliente</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Contrato, procuração e-CAC, termo LGPD, cadastro no software
+                            contábil.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Cliente novo assinou; Precisa formalizar a entrada no
+                            escritório.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Pacote completo (contrato + procuração + LGPD) + checklist
+                            operacional.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente onboarding-cliente para gerar o pacote de entrada de [nome]"
+                    </div>
+                </div>
+
+                <!-- 23 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">23</span>
+                    </div>
+                    <h3>Follow-up Cliente</h3>
+                    <span class="agent-slug">follow-up-cliente</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Atualização proativa pós-fechamento, reunião trimestral, gestão
+                            churn.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Estruturar régua de comunicação; Cliente VIP precisa de atenção.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Régua de comunicação + 5 modelos prontos + métricas NPS.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente follow-up-cliente para criar modelos de comunicação mensal"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORIA 6 -->
+        <section id="cat6" class="category-section">
+            <h2>CATEGORIA 6 — OPERAÇÃO INTERNA (24–27)</h2>
+            <div class="agents-grid">
+                <!-- 24 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">24</span>
+                    </div>
+                    <h3>Cadastro de NF</h3>
+                    <span class="agent-slug">cadastro-nf</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Classificação de notas (CFOP, CST, NCM) para escrituração.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Recebeu lote de NFs; Divergência entre XML e PDF.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Planilha de classificação + plano de correção de NFs
+                            problemáticas.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente cadastro-nf para classificar as NFs de entrada de [nome]"
+                    </div>
+                </div>
+
+                <!-- 25 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">25</span>
+                    </div>
+                    <h3>Lembrete de Prazo</h3>
+                    <span class="agent-slug">lembrete-prazo</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Controle de prazos legais e declarações. Gera calendário ICS.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Montar calendário fiscal mensal ou anual para o cliente.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Calendário em CSV/ICS + régua de avisos D-7/D-3/D-0.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente lembrete-prazo para gerar o calendário fiscal de [mês]"</div>
+                </div>
+
+                <!-- 26 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">26</span>
+                    </div>
+                    <h3>Relatório Mensal</h3>
+                    <span class="agent-slug">relatorio-mensal</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Relatório executivo de 1 página com KPIs (receita, despesa,
+                            lucro).</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Acabou o fechamento; Enviar síntese de valor ao cliente VIP.
+                        </div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Relatório de 1 página + tabela de KPIs + comentário do contador.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente relatorio-mensal para gerar o relatório de [mês/ano]"</div>
+                </div>
+
+                <!-- 27 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">27</span>
+                    </div>
+                    <h3>Backup do Escritório</h3>
+                    <span class="agent-slug">backup-escritorio</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Política 3-2-1 e teste de restore mensal. Adequação LGPD.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Estruturar a política de backup; Incidente de segurança
+                            ocorrido.</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Entrega</span>
+                        <div class="agent-info-content">Política escrita + script de teste mensal + plano de resposta
+                            48h.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente backup-escritorio para criar a política de backup"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORIA 7 -->
+        <section id="cat7" class="category-section">
+            <h2>CATEGORIA 7 — ESPECIALIZAÇÕES (28–57)</h2>
+            <p style="margin-bottom: 2rem;">Os agentes de especialização cobrem áreas específicas como MEI, IPI, Malha
+                Fina e Reforma Tributária.</p>
+            <div class="agents-grid">
+                <!-- 28 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">28</span>
+                    </div>
+                    <h3>Apuração MEI</h3>
+                    <span class="agent-slug">apuracao-mei</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">DAS-MEI mensal, DASN-SIMEI anual e controle do limite de
+                            faturamento (R$ 81k).</div>
+                    </div>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">Ative quando</span>
+                        <div class="agent-info-content">Cliente é MEI; Faturamento acumulado próximo a R$ 65k.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente apuracao-mei para gerar o DAS-MEI de [mês]"</div>
+                </div>
+
+                <!-- 29 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">29</span>
+                    </div>
+                    <h3>Cálculo IPI</h3>
+                    <span class="agent-slug">calculo-ipi</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Apuração de IPI para indústria e equiparados. Cobre regimes de
+                            suspensão e Bloco K.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente calculo-ipi para apurar o IPI de [mês]"</div>
+                </div>
+
+                <!-- 30 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">30</span>
+                    </div>
+                    <h3>IRRF na Folha</h3>
+                    <span class="agent-slug">calculo-irrf-folha</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">IRRF sobre CLT, pró-labore e RPA. Aplica tabela progressiva
+                            2026.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente calculo-irrf-folha para calcular o IRRF de [nome]"</div>
+                </div>
+
+                <!-- 31 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">31</span>
+                    </div>
+                    <h3>Retenções Tributárias (Tomador)</h3>
+                    <span class="agent-slug">retencoes-tributarias-tomador</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Retenções (IRRF, CSRF, INSS, ISS) que o tomador deve fazer ao
+                            pagar a NF.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente retencoes-tributarias-tomador para calcular as retenções"
+                    </div>
+                </div>
+
+                <!-- 32 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">32</span>
+                    </div>
+                    <h3>EFD-Contribuições</h3>
+                    <span class="agent-slug">efd-contribuicoes</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Escrituração de PIS/COFINS por CST, Bloco M e F. Concilia com
+                            DCTFWeb.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente efd-contribuicoes para montar a EFD de [mês]"</div>
+                </div>
+
+                <!-- 33 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">33</span>
+                    </div>
+                    <h3>DIMOB</h3>
+                    <span class="agent-slug">dimob</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Declaração para imobiliárias e construtoras sobre locação e
+                            venda.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente dimob para gerar a DIMOB de [ano]"</div>
+                </div>
+
+                <!-- 34 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">34</span>
+                    </div>
+                    <h3>DMED</h3>
+                    <span class="agent-slug">dmed</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Declaração para prestadores de serviços médicos e operadoras de
+                            saúde.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente dmed para gerar a DMED de [ano]"</div>
+                </div>
+
+                <!-- 35 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">35</span>
+                    </div>
+                    <h3>Folha de Pagamento Mensal</h3>
+                    <span class="agent-slug">folha-pagamento-mensal</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Processamento completo da folha CLT com adicionais e descontos.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente folha-pagamento-mensal para processar a folha de [mês]"</div>
+                </div>
+
+                <!-- 36 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">36</span>
+                    </div>
+                    <h3>Plano de Contas CPC</h3>
+                    <span class="agent-slug">plano-contas-cpc</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Estruturação com mapeamento referencial fiscal e aderência aos
+                            CPCs.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente plano-contas-cpc para criar o plano de [nome]"</div>
+                </div>
+
+                <!-- 37 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">37</span>
+                    </div>
+                    <h3>Lançamentos Contábeis Padrão</h3>
+                    <span class="agent-slug">lancamentos-contabeis-padrao</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Catálogo operacional de lançamentos D/C para operações
+                            cotidianas.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente lancamentos-contabeis-padrao para mostrar lançamentos"</div>
+                </div>
+
+                <!-- 38 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">38</span>
+                    </div>
+                    <h3>Conciliação Cartões</h3>
+                    <span class="agent-slug">conciliacao-cartoes-credenciadora</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Bate vendas via cartão com os repasses da credenciadora.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente conciliacao-cartoes-credenciadora para conciliar cartões"
+                    </div>
+                </div>
+
+                <!-- 39 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">39</span>
+                    </div>
+                    <h3>Conciliação Fornecedores</h3>
+                    <span class="agent-slug">conciliacao-fornecedores</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Match NFs recebidas × pagamentos × histórico de contas a pagar.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente conciliacao-fornecedores para conciliar fornecedores"</div>
+                </div>
+
+                <!-- 40 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">40</span>
+                    </div>
+                    <h3>Conciliação Clientes</h3>
+                    <span class="agent-slug">conciliacao-clientes</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Match NFs emitidas × recebimentos. Monta aging de contas a
+                            receber.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente conciliacao-clientes para montar o aging de clientes"</div>
+                </div>
+
+                <!-- 41 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">41</span>
+                    </div>
+                    <h3>Fechamento Mensal</h3>
+                    <span class="agent-slug">fechamento-mensal</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Roteiro completo de fechamento contábil em até 5 dias úteis.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente fechamento-mensal para guiar o fechamento de [mês]"</div>
+                </div>
+
+                <!-- 42 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">42</span>
+                    </div>
+                    <h3>Balancete — Análise</h3>
+                    <span class="agent-slug">balancete-analise</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Verifica integridade, coerência e calcula indicadores
+                            financeiros.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente balancete-analise para revisar o balancete de [mês]"</div>
+                </div>
+
+                <!-- 43 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">43</span>
+                    </div>
+                    <h3>Ativo Imobilizado / Depreciação</h3>
+                    <span class="agent-slug">ativo-imobilizado-depreciacao</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Gestão do imobilizado, cálculo de depreciação e teste de
+                            impairment.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente ativo-imobilizado-depreciacao para cadastrar bem"</div>
+                </div>
+
+                <!-- 44 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">44</span>
+                    </div>
+                    <h3>Análise de Regime Tributário</h3>
+                    <span class="agent-slug">analise-tributaria-regime</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Comparativo Simples × Presumido × Real com projeção e
+                            sensibilidade.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente analise-tributaria-regime para comparar os regimes"</div>
+                </div>
+
+                <!-- 45 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">45</span>
+                    </div>
+                    <h3>Recuperação Créditos PIS/COFINS</h3>
+                    <span class="agent-slug">recuperacao-creditos-pis-cofins</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Recuperação retroativa dos últimos 5 anos (Tema 69 STF, Tema 779
+                            STJ).</div>
+                    </div>
+                    <div class="invoke-code">"use o agente recuperacao-creditos-pis-cofins para levantar créditos"</div>
+                </div>
+
+                <!-- 46 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">46</span>
+                    </div>
+                    <h3>Revisão Fiscal / Cruzamento SPED</h3>
+                    <span class="agent-slug">revisao-fiscal-cruzamento-sped</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Cruzamento entre todas as obrigações para identificar
+                            divergências.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente revisao-fiscal-cruzamento-sped para cruzar obrigações"</div>
+                </div>
+
+                <!-- 47 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">47</span>
+                    </div>
+                    <h3>Malha Fina PF</h3>
+                    <span class="agent-slug">malha-fina-pf-diagnostico</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Diagnóstico de pendências de IRPF no e-CAC e preparação de
+                            defesa.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente malha-fina-pf-diagnostico para analisar pendência"</div>
+                </div>
+
+                <!-- 48 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">48</span>
+                    </div>
+                    <h3>Malha Fina PJ</h3>
+                    <span class="agent-slug">malha-fina-pj-diagnostico</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Diagnóstico de intimações e inconsistências na malha PJ.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente malha-fina-pj-diagnostico para analisar intimação"</div>
+                </div>
+
+                <!-- 49 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">49</span>
+                    </div>
+                    <h3>Due Diligence Contábil</h3>
+                    <span class="agent-slug">due-diligence-contabil</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Identificação de passivos ocultos e ajuste de EBITDA pré-M&A.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente due-diligence-contabil para iniciar DD"</div>
+                </div>
+
+                <!-- 50 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">50</span>
+                    </div>
+                    <h3>Valuation PME</h3>
+                    <span class="agent-slug">valuation-pme</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Avaliação por DCF, múltiplos comparáveis e patrimonial.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente valuation-pme para avaliar a empresa [nome]"</div>
+                </div>
+
+                <!-- 51 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">51</span>
+                    </div>
+                    <h3>IRPF — Declaração Completa</h3>
+                    <span class="agent-slug">irpf-declaracao-completa</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Declaração anual com múltiplas fontes, bens, direitos e dívidas.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente irpf-declaracao-completa para preparar IRPF"</div>
+                </div>
+
+                <!-- 52 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">52</span>
+                    </div>
+                    <h3>Abertura de Empresa / CNPJ</h3>
+                    <span class="agent-slug">abertura-empresa-cnpj</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Processo REDESIM completo, viabilidade, DBE e contrato social.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente abertura-empresa-cnpj para abrir uma [LTDA/SLU]"</div>
+                </div>
+
+                <!-- 53 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">53</span>
+                    </div>
+                    <h3>Alteração Contratual</h3>
+                    <span class="agent-slug">alteracao-contratual</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Mudança de sócios, capital, endereço ou objeto via REDESIM.
+                        </div>
+                    </div>
+                    <div class="invoke-code">"use o agente alteracao-contratual para redigir alteração"</div>
+                </div>
+
+                <!-- 54 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">54</span>
+                    </div>
+                    <h3>Encerramento / Baixa</h3>
+                    <span class="agent-slug">encerramento-empresa-baixa</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Baixa regular ou com débitos, distrato e declarações
+                            fracionadas.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente encerramento-empresa-baixa para estruturar baixa"</div>
+                </div>
+
+                <!-- 55 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">55</span>
+                    </div>
+                    <h3>Parcelamento Receita Federal</h3>
+                    <span class="agent-slug">parcelamento-receita-federal</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Simulação e adesão a parcelamentos federais e transações
+                            tributárias.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente parcelamento-receita-federal para simular parcelamento"</div>
+                </div>
+
+                <!-- 56 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">56</span>
+                    </div>
+                    <h3>Resposta a Fiscalização</h3>
+                    <span class="agent-slug">resposta-fiscalizacao-intimacao</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Resposta a intimações e autos de infração com fundamentação
+                            legal.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente resposta-fiscalizacao-intimacao para responder auto"</div>
+                </div>
+
+                <!-- 57 -->
+                <div class="agent-card">
+                    <div class="agent-header">
+                        <span class="agent-number">57</span>
+                    </div>
+                    <h3>Reforma Tributária — CBS/IBS</h3>
+                    <span class="agent-slug">reforma-tributaria-cbs-ibs</span>
+                    <div class="agent-info-group">
+                        <span class="agent-info-label">O que faz</span>
+                        <div class="agent-info-content">Simulação de impacto da EC 132/2023. Split payment, cashback,
+                            transição.</div>
+                    </div>
+                    <div class="invoke-code">"use o agente reforma-tributaria-cbs-ibs para simular impacto"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PIPELINES -->
+        <section id="pipelines" class="pipelines-section">
+            <h2>Pipelines Recomendados</h2>
+            <div
+                style="background-color: #f1f5f9; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem; border-left: 4px solid var(--secondary-color);">
+                <p><strong>O que são Pipelines?</strong> No mundo contábil, uma tarefa raramente é isolada. Um
+                    "Pipeline" é uma <strong>Linha de Montagem Digital</strong>. Como Analista Sênior, projetei essas
+                    sequências para garantir que o dado flua corretamente sem erros de integridade.</p>
+                <ul style="margin-top: 1rem; margin-left: 1.5rem; font-size: 0.95rem;">
+                    <li><strong>Interdependência:</strong> O Agente 24 (Cadastro de NF) organiza os dados que o Agente
+                        16 (Conciliação) usará para bater com o banco. Sem o primeiro, o segundo trabalha no escuro.
+                    </li>
+                    <li><strong>Segurança Jurídica:</strong> Seguir a sequência garante que as obrigações acessórias
+                        (SPED, DCTFWeb) sejam geradas apenas após a validação dos cálculos, evitando multas por
+                        retificação.</li>
+                    <li><strong>Validação em Camadas:</strong> O pipeline termina sempre com um agente de revisão (como
+                        o 42 ou 26) para que o contador humano dê a palavra final sobre dados já auditados pelos agentes
+                        anteriores.</li>
+                </ul>
+            </div>
+            <p>Siga estas sequências para garantir a integridade total do processo:</p>
+            <table class="pipelines-table">
+                <thead>
+                    <tr>
+                        <th>Processo</th>
+                        <th>Sequência de Agentes (Slugs)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Fechamento mensal completo</td>
+                        <td class="pipeline-sequence">24 → 16 → 38 → 39 → 40 → 41 → 42 → 26</td>
+                    </tr>
+                    <tr>
+                        <td>Folha CLT mensal</td>
+                        <td class="pipeline-sequence">35 → 11 → 14 → 10 → 09 → 08</td>
+                    </tr>
+                    <tr>
+                        <td>Abertura de empresa</td>
+                        <td class="pipeline-sequence">52 → 36 → 22</td>
+                    </tr>
+                    <tr>
+                        <td>Fiscalização recebida</td>
+                        <td class="pipeline-sequence">48 → 46 → 56</td>
+                    </tr>
+                    <tr>
+                        <td>Onboarding cliente novo</td>
+                        <td class="pipeline-sequence">22 → 36 → 25</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <footer style="margin-top: 5rem; text-align: center; color: #94a3b8; padding-bottom: 2rem;">
+            &copy; 2026 57 Agents Contabilidade - Manual de Uso Offline
+        </footer>
+    </main>
+
+    <script>
+        // Smooth scrolling for sidebar links
+        document.querySelectorAll('.sidebar a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+
+                // Update active link
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.agent-card');
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                const shouldShow = text.includes(searchTerm);
+                card.style.display = shouldShow ? 'flex' : 'none';
+
+                // Manage the special message card in Cat 7
+                if (card.querySelector('em')) {
+                    card.style.display = searchTerm === '' ? 'flex' : 'none';
+                }
+            });
+
+            // If a category has no visible agents, hide the category header
+            document.querySelectorAll('.category-section').forEach(section => {
+                const visibleCards = section.querySelectorAll('.agent-card[style*="display: flex"]');
+                section.style.display = visibleCards.length > 0 ? 'block' : 'none';
+            });
+        });
+
+        // Simple observer to highlight current section in sidebar
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    document.querySelectorAll('.sidebar a').forEach(a => {
+                        a.classList.toggle('active', a.getAttribute('href') === `#${id}`);
+                    });
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.category-section, .pipelines-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+
+</html>
