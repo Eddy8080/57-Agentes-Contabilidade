@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron');
 const path = require('path');
 const pty  = require('@homebridge/node-pty-prebuilt-multiarch');
 const fs   = require('fs');
@@ -21,14 +21,22 @@ function log(tag, msg) {
 try { fs.writeFileSync(LOG_FILE, `=== 57 Agents — ${new Date().toISOString()} ===\n`); } catch (_) {}
 // ────────────────────────────────────────────────────────
 
+// userData é gravável tanto em dev quanto no .asar empacotado
+function getThemeFile() { return path.join(app.getPath('userData'), '.theme'); }
+
+function readTheme() {
+  try { return fs.readFileSync(getThemeFile(), 'utf8').trim(); } catch { return 'dark'; }
+}
+
 function createWindow() {
+  const theme = readTheme();
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
     minWidth: 960,
     minHeight: 600,
     frame: false,
-    backgroundColor: '#0d1117',
+    backgroundColor: theme === 'light' ? '#f6f8fa' : '#0d1117',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -162,3 +170,9 @@ ipcMain.on('window-maximize', () => {
   mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize();
 });
 ipcMain.on('window-close', () => mainWindow.close());
+
+// Persistir tema: salva no disco + atualiza backgroundColor da janela
+ipcMain.on('set-theme', (_event, theme) => {
+  try { fs.writeFileSync(getThemeFile(), theme); } catch {}
+  if (mainWindow) mainWindow.setBackgroundColor(theme === 'light' ? '#f6f8fa' : '#0d1117');
+});

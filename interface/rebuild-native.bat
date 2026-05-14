@@ -25,8 +25,8 @@ if errorlevel 1 (
 :: Copia binding.gyp com correção para VS2026
 copy /Y "%MODULE_DIR%\binding.gyp" "%TMP_BUILD%\binding.gyp" >nul
 
-:: Aplica patch no winpty.gyp (GetCommitHash.bat precisa de .\)
-powershell -Command "(Get-Content '%TMP_BUILD%\deps\winpty\src\winpty.gyp') -replace 'GetCommitHash.bat', '.\GetCommitHash.bat' -replace 'UpdateGenVersion.bat', '.\UpdateGenVersion.bat' | Set-Content '%TMP_BUILD%\deps\winpty\src\winpty.gyp'"
+:: Aplica patch no winpty.gyp — usa \\ (Python 3.12 rejeita \G e \U como escape inválido)
+powershell -Command "(Get-Content '%TMP_BUILD%\deps\winpty\src\winpty.gyp') -replace 'GetCommitHash.bat', '.\\\\GetCommitHash.bat' -replace 'UpdateGenVersion.bat', '.\\\\UpdateGenVersion.bat' | Set-Content '%TMP_BUILD%\deps\winpty\src\winpty.gyp'"
 
 :: Configura o ambiente VS2026
 call "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64 >nul 2>&1

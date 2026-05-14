@@ -39,6 +39,21 @@
       Terminal
     </button>
 
+    <!-- Alternar tema claro/escuro -->
+    <button id="btn-theme-toggle" title="Alternar tema claro/escuro (L)">
+      <!-- Sol: visível no modo escuro → clica para ir ao claro -->
+      <svg id="theme-icon-sun" width="13" height="13" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M17.66 6.34l-1.41 1.41M6.34 17.66l-1.41 1.41"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <!-- Lua: visível no modo claro → clica para ir ao escuro -->
+      <svg id="theme-icon-moon" width="13" height="13" viewBox="0 0 24 24" fill="none" style="display:none">
+        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
     <!-- Botões de controle da janela (substitui barra nativa) -->
     <div id="window-controls">
       <button class="wc-btn" id="btn-minimize"

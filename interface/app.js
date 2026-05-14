@@ -18,9 +18,63 @@
 
 
   // ═══════════════════════════════════════════════════════
+  // TEMAS DO TERMINAL XTERM.JS
+  // ═══════════════════════════════════════════════════════
+  const TERM_THEME_DARK = {
+    background:          '#010409',
+    foreground:          '#e6edf3',
+    cursor:              '#58a6ff',
+    cursorAccent:        '#0d1117',
+    selectionBackground: 'rgba(88,166,255,0.25)',
+    black:   '#484f58', red:     '#ff7b72',
+    green:   '#3fb950', yellow:  '#d29922',
+    blue:    '#58a6ff', magenta: '#bc8cff',
+    cyan:    '#39c5cf', white:   '#b1bac4',
+    brightBlack:   '#6e7681', brightRed:     '#ffa198',
+    brightGreen:   '#56d364', brightYellow:  '#e3b341',
+    brightBlue:    '#79c0ff', brightMagenta: '#d2a8ff',
+    brightCyan:    '#56d4dd', brightWhite:   '#f0f6fc',
+  };
+
+  const TERM_THEME_LIGHT = {
+    background:          '#f6f8fa',
+    foreground:          '#1f2328',
+    cursor:              '#0969da',
+    cursorAccent:        '#f6f8fa',
+    selectionBackground: 'rgba(9,105,218,0.2)',
+    black:   '#57606a', red:     '#cf222e',
+    green:   '#1a7f37', yellow:  '#9a6700',
+    blue:    '#0969da', magenta: '#6e40c9',
+    cyan:    '#0550ae', white:   '#8c959f',
+    brightBlack:   '#6e7781', brightRed:     '#a40e26',
+    brightGreen:   '#2da44e', brightYellow:  '#bf8700',
+    brightBlue:    '#218bff', brightMagenta: '#a475f9',
+    brightCyan:    '#0550ae', brightWhite:   '#1f2328',
+  };
+
+
+  // ═══════════════════════════════════════════════════════
+  // TEMA CLARO / ESCURO
+  // ═══════════════════════════════════════════════════════
+  function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+    document.getElementById('theme-icon-sun').style.display  = theme === 'dark'  ? '' : 'none';
+    document.getElementById('theme-icon-moon').style.display = theme === 'light' ? '' : 'none';
+    if (window.windowControls?.setTheme) window.windowControls.setTheme(theme);
+    if (termInstance) {
+      const t = theme === 'light' ? TERM_THEME_LIGHT : TERM_THEME_DARK;
+      try { termInstance.options.theme = t; }
+      catch (_) { try { termInstance.setOption('theme', t); } catch (_) {} }
+    }
+  }
+
+
+  // ═══════════════════════════════════════════════════════
   // INICIALIZAÇÃO
   // ═══════════════════════════════════════════════════════
   async function init() {
+    applyTheme(localStorage.getItem('theme') || 'dark');
     updateStatus('Carregando agentes...', false);
 
     // Tenta detectar agentes instalados em ~/.claude/agents/
@@ -453,6 +507,7 @@
   function initTerminal() {
     if (typeof Terminal === 'undefined') return;
 
+    const savedTheme = localStorage.getItem('theme') || 'dark';
     termInstance = new Terminal({
       fontFamily: "'Cascadia Code', 'Consolas', 'Courier New', monospace",
       fontSize:   12,
@@ -461,21 +516,7 @@
       cursorStyle: 'bar',
       scrollback:  3000,
       allowTransparency: true,
-      theme: {
-        background:      '#010409',
-        foreground:      '#e6edf3',
-        cursor:          '#58a6ff',
-        cursorAccent:    '#0d1117',
-        selectionBackground: 'rgba(88,166,255,0.25)',
-        black:   '#484f58', red:     '#ff7b72',
-        green:   '#3fb950', yellow:  '#d29922',
-        blue:    '#58a6ff', magenta: '#bc8cff',
-        cyan:    '#39c5cf', white:   '#b1bac4',
-        brightBlack:   '#6e7681', brightRed:     '#ffa198',
-        brightGreen:   '#56d364', brightYellow:  '#e3b341',
-        brightBlue:    '#79c0ff', brightMagenta: '#d2a8ff',
-        brightCyan:    '#56d4dd', brightWhite:   '#f0f6fc',
-      },
+      theme: savedTheme === 'light' ? TERM_THEME_LIGHT : TERM_THEME_DARK,
     });
 
     // FitAddon — xterm-addon-fit expõe window.FitAddon.FitAddon no UMD
@@ -603,11 +644,20 @@
     document.getElementById('tf-close-btn')
       .addEventListener('click', () => hideTerminal(true));
 
-    // Esc: fecha painel detalhe | T: toggle terminal
+    // Toggle de tema
+    document.getElementById('btn-theme-toggle').addEventListener('click', () => {
+      const current = document.documentElement.dataset.theme || 'dark';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // Esc: fecha painel detalhe | T: toggle terminal | L: toggle tema
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') { closeDetail(); return; }
-      if ((e.key === 't' || e.key === 'T') && document.activeElement.tagName !== 'INPUT') {
-        toggleTerminalVisible();
+      if (document.activeElement.tagName === 'INPUT') return;
+      if (e.key === 't' || e.key === 'T') toggleTerminalVisible();
+      if (e.key === 'l' || e.key === 'L') {
+        const current = document.documentElement.dataset.theme || 'dark';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
       }
     });
   }

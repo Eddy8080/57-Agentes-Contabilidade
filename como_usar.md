@@ -9,6 +9,29 @@ Referência completa de todos os agentes — o que cada um faz, quando acionar, 
 
 ---
 
+## INSTALAÇÃO — Claude Code CLI
+
+**Passo 1 — Instalar Node.js LTS v22.22.2 ou superior**
+Baixe em: https://nodejs.org/en/download (selecione **LTS**, **Windows**, **fnm** ou **nvm**, **npm**)
+> A v20.20.2 também funciona, porém está em fim de vida (EOL).
+
+**Passo 2 — Verificar versão do Node.js**
+```
+node -v
+```
+
+**Passo 3 — Instalar Claude Code CLI**
+```
+npm install -g @anthropic-ai/claude-code
+```
+
+**Passo 4 — Iniciar**
+```
+claude
+```
+
+---
+
 ## CATEGORIA 1 — APURAÇÃO & TRIBUTÁRIO (01–05)
 
 ---
@@ -862,11 +885,20 @@ Referência completa de todos os agentes — o que cada um faz, quando acionar, 
 | Folha CLT mensal | `35` → `11` → `14` → `10` (S-1200) → `09` (R-4010) → `08` |
 | Abertura de empresa | `52` → `36` → `22` |
 | Fiscalização recebida | `48` → `46` → `56` |
-| Planejamento tributário anual | `44` → `03` → `04` → `05` |
-| Recuperação fiscal retroativa | `45` → `46` |
-| Due diligence M&A | `49` → `50` |
-| Transição Reforma Tributária | `57` → `44` → ajuste do `36` |
 | Onboarding cliente novo | `22` → `36` → `25` |
+| MEI próximo do limite (migração) | `28` → `44` → `52` |
+| Admissão de funcionário CLT | `15` → `10` → `11` |
+| Rescisão de funcionário CLT | `13` → `10` → `14` |
+| Apuração mensal Lucro Presumido | `03` → `04` → `05` → `08` → `09` |
+| Encerramento de empresa (baixa) | `54` → `07` → `08` |
+| Planejamento tributário anual | `42` → `44` → `26` |
+| IRPF declaração anual (PF) | `51` → `47` |
+| Regularização de dívida federal | `46` → `48` → `55` |
+| Indústria / apuração IPI | `29` → `06` → `46` |
+| Venda / M&A de empresa | `49` → `50` → `53` |
+| 13º Salário (1ª e 2ª parcela) | `12` → `11` → `10` |
+| Recuperação créditos PIS/COFINS | `45` → `08` |
+| Transição Reforma Tributária | `57` → `44` → `36` |
 
 ---
 

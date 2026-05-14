@@ -20,4 +20,5 @@ contextBridge.exposeInMainWorld('windowControls', {
   minimize: () => ipcRenderer.send('window-minimize'),
   maximize: () => ipcRenderer.send('window-maximize'),
   close:    () => ipcRenderer.send('window-close'),
+  setTheme: (theme) => ipcRenderer.send('set-theme', theme),
 });

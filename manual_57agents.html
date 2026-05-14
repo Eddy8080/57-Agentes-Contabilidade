@@ -113,6 +113,7 @@
             z-index: 90;
             margin-bottom: 3rem;
             background: rgba(248, 250, 252, 0.8);
+            -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
             padding: 1rem 0;
         }
@@ -233,6 +234,67 @@
             border-left: 4px solid var(--accent-color);
         }
 
+        /* Installation section */
+        .installation-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .step-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .step-container:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-label {
+            font-weight: bold;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            margin-bottom: 0.75rem;
+        }
+
+        .step-link {
+            display: inline-block;
+            background-color: #f1f5f9;
+            color: var(--secondary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+        }
+
+        .step-code {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .step-code.success {
+            border-left-color: var(--success-color);
+        }
+
+        .category-description {
+            margin-bottom: 2rem;
+        }
+
         /* Pipelines Table */
         .pipelines-section {
             background-color: #ffffff;
@@ -269,6 +331,28 @@
             color: var(--secondary-color);
         }
 
+        .pipelines-info {
+            background-color: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .pipelines-list {
+            margin-top: 1rem;
+            margin-left: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        .site-footer {
+            margin-top: 5rem;
+            text-align: center;
+            color: #94a3b8;
+            padding-bottom: 2rem;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
@@ -299,6 +383,7 @@
         <h2>57 Agents</h2>
         <nav>
             <ul>
+                <li><a href="#instalacao">Instalação</a></li>
                 <li><a href="#cat1">1 — Apuração & Tributário</a></li>
                 <li><a href="#cat2">2 — Obrigações Acessórias</a></li>
                 <li><a href="#cat3">3 — Folha & DP</a></li>
@@ -322,6 +407,35 @@
                     placeholder="Pesquisar por nome, número, slug ou tarefa (ex: 'férias', 'DAS', '01')...">
             </div>
         </header>
+
+        <!-- INSTALAÇÃO -->
+        <section id="instalacao" class="category-section">
+            <h2>INSTALAÇÃO — Claude Code CLI</h2>
+            <div class="installation-card">
+
+                <div class="step-container">
+                    <span class="step-label">PASSO 1 — Instalar Node.js 18+</span>
+                    <p class="step-description">Baixe e instale o Node.js <strong>LTS — v22.22.2 ou superior</strong> (versão atual recomendada). A v20.20.2 também funciona, porém está em fim de vida (EOL):</p>
+                    <a href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer" class="step-link">https://nodejs.org/en/download</a>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-label">PASSO 2 — Verificar versão do Node.js</span>
+                    <div class="step-code">node -v</div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-label">PASSO 3 — Instalar Claude Code CLI</span>
+                    <div class="step-code">npm install -g @anthropic-ai/claude-code</div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-label">PASSO 4 — Iniciar</span>
+                    <div class="step-code success">claude</div>
+                </div>
+
+            </div>
+        </section>
 
         <!-- CATEGORIA 1 -->
         <section id="cat1" class="category-section">
@@ -1091,7 +1205,7 @@
         <!-- CATEGORIA 7 -->
         <section id="cat7" class="category-section">
             <h2>CATEGORIA 7 — ESPECIALIZAÇÕES (28–57)</h2>
-            <p style="margin-bottom: 2rem;">Os agentes de especialização cobrem áreas específicas como MEI, IPI, Malha
+            <p class="category-description">Os agentes de especialização cobrem áreas específicas como MEI, IPI, Malha
                 Fina e Reforma Tributária.</p>
             <div class="agents-grid">
                 <!-- 28 -->
@@ -1552,12 +1666,11 @@
         <!-- PIPELINES -->
         <section id="pipelines" class="pipelines-section">
             <h2>Pipelines Recomendados</h2>
-            <div
-                style="background-color: #f1f5f9; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem; border-left: 4px solid var(--secondary-color);">
+            <div class="pipelines-info">
                 <p><strong>O que são Pipelines?</strong> No mundo contábil, uma tarefa raramente é isolada. Um
                     "Pipeline" é uma <strong>Linha de Montagem Digital</strong>. Como Analista Sênior, projetei essas
                     sequências para garantir que o dado flua corretamente sem erros de integridade.</p>
-                <ul style="margin-top: 1rem; margin-left: 1.5rem; font-size: 0.95rem;">
+                <ul class="pipelines-list">
                     <li><strong>Interdependência:</strong> O Agente 24 (Cadastro de NF) organiza os dados que o Agente
                         16 (Conciliação) usará para bater com o banco. Sem o primeiro, o segundo trabalha no escuro.
                     </li>
@@ -1598,11 +1711,59 @@
                         <td>Onboarding cliente novo</td>
                         <td class="pipeline-sequence">22 → 36 → 25</td>
                     </tr>
+                    <tr>
+                        <td>MEI próximo do limite (migração)</td>
+                        <td class="pipeline-sequence">28 → 44 → 52</td>
+                    </tr>
+                    <tr>
+                        <td>Admissão de funcionário CLT</td>
+                        <td class="pipeline-sequence">15 → 10 → 11</td>
+                    </tr>
+                    <tr>
+                        <td>Rescisão de funcionário CLT</td>
+                        <td class="pipeline-sequence">13 → 10 → 14</td>
+                    </tr>
+                    <tr>
+                        <td>Apuração mensal Lucro Presumido</td>
+                        <td class="pipeline-sequence">03 → 04 → 05 → 08 → 09</td>
+                    </tr>
+                    <tr>
+                        <td>Encerramento de empresa (baixa)</td>
+                        <td class="pipeline-sequence">54 → 07 → 08</td>
+                    </tr>
+                    <tr>
+                        <td>Planejamento tributário anual</td>
+                        <td class="pipeline-sequence">42 → 44 → 26</td>
+                    </tr>
+                    <tr>
+                        <td>IRPF declaração anual (PF)</td>
+                        <td class="pipeline-sequence">51 → 47</td>
+                    </tr>
+                    <tr>
+                        <td>Regularização de dívida federal</td>
+                        <td class="pipeline-sequence">46 → 48 → 55</td>
+                    </tr>
+                    <tr>
+                        <td>Indústria / apuração IPI</td>
+                        <td class="pipeline-sequence">29 → 06 → 46</td>
+                    </tr>
+                    <tr>
+                        <td>Venda / M&A de empresa</td>
+                        <td class="pipeline-sequence">49 → 50 → 53</td>
+                    </tr>
+                    <tr>
+                        <td>13º Salário (1ª e 2ª parcela)</td>
+                        <td class="pipeline-sequence">12 → 11 → 10</td>
+                    </tr>
+                    <tr>
+                        <td>Recuperação créditos PIS/COFINS</td>
+                        <td class="pipeline-sequence">45 → 08</td>
+                    </tr>
                 </tbody>
             </table>
         </section>
 
-        <footer style="margin-top: 5rem; text-align: center; color: #94a3b8; padding-bottom: 2rem;">
+        <footer class="site-footer">
             &copy; 2026 57 Agents Contabilidade - Manual de Uso Offline
         </footer>
     </main>
