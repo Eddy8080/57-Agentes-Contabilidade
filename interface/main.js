@@ -132,13 +132,28 @@ function createShell() {
   });
 }
 
+// Watcher de agentes.md → agents.html (raiz do projeto)
+let agentsWatcher;
+function startAgentsWatcher() {
+  try {
+    const { generate, startWatcher } = require('../generate-agents-html.js');
+    generate();
+    agentsWatcher = startWatcher();
+    log('AGENTS', 'Watcher de agentes.md ativo — agents.html será regenerado ao salvar.');
+  } catch (err) {
+    log('AGENTS', `Watcher não iniciado: ${err.message}`);
+  }
+}
+
 app.whenReady().then(() => {
+  startAgentsWatcher();
   createWindow();
   createShell();
 });
 
 app.on('window-all-closed', () => {
   if (ptyProcess) ptyProcess.kill();
+  if (agentsWatcher) agentsWatcher.close();
   if (process.platform !== 'darwin') app.quit();
 });
 

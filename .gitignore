@@ -24,3 +24,7 @@ Thumbs.db
 all_contents.json
 manual_57agents
 start-debug
+agents.html
+agents.md
+generate-agents-html.js
+mestre.md

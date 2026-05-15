@@ -4,6 +4,8 @@
   "description": "57 Agents Contabilidade - Interface Desktop",
   "scripts": {
     "start": "npm start --prefix interface",
-    "build": "powershell -ExecutionPolicy Bypass -File build.ps1"
+    "build": "powershell -ExecutionPolicy Bypass -File build.ps1",
+    "agents": "node generate-agents-html.js",
+    "agents:watch": "node generate-agents-html.js --watch"
   }
 }
