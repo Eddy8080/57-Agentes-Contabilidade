@@ -56,17 +56,81 @@
   // ═══════════════════════════════════════════════════════
   // TEMA CLARO / ESCURO
   // ═══════════════════════════════════════════════════════
-  function applyTheme(theme) {
+  function updateThemeUI(theme) {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('theme', theme);
     document.getElementById('theme-icon-sun').style.display  = theme === 'dark'  ? '' : 'none';
     document.getElementById('theme-icon-moon').style.display = theme === 'light' ? '' : 'none';
+
+    // Atualiza o Avatar
+    const avatar = document.getElementById('app-avatar');
+    if (avatar) {
+      avatar.src = theme === 'light' ? avatar.dataset.light : avatar.dataset.dark;
+    }
+
     if (window.windowControls?.setTheme) window.windowControls.setTheme(theme);
     if (termInstance) {
       const t = theme === 'light' ? TERM_THEME_LIGHT : TERM_THEME_DARK;
       try { termInstance.options.theme = t; }
       catch (_) { try { termInstance.setOption('theme', t); } catch (_) {} }
     }
+  }
+
+  function toggleTheme(e) {
+    const current = document.documentElement.dataset.theme || 'dark';
+    const next    = current === 'dark' ? 'light' : 'dark';
+    
+    // Coordenadas para o efeito circular (origem no clique ou no centro do botão)
+    let x, y;
+    if (e && e.clientX && e.clientY) {
+      x = e.clientX;
+      y = e.clientY;
+    } else {
+      const btn = document.getElementById('btn-theme-toggle');
+      const rect = btn.getBoundingClientRect();
+      x = rect.left + rect.width / 2;
+      y = rect.top + rect.height / 2;
+    }
+
+    const radius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    // View Transitions API (Chromium 111+)
+    if (document.startViewTransition) {
+      document.documentElement.style.setProperty('--vt-x', `${x}px`);
+      document.documentElement.style.setProperty('--vt-y', `${y}px`);
+
+      const transition = document.startViewTransition(() => {
+        updateThemeUI(next);
+      });
+
+      transition.ready.then(() => {
+        document.documentElement.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${radius}px at ${x}px ${y}px)`
+            ]
+          },
+          {
+            duration: 500,
+            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+            pseudoElement: '::view-transition-new(root)',
+            fill: 'forwards'
+          }
+        );
+      });
+      return;
+    }
+
+    // Fallback básico
+    updateThemeUI(next);
+  }
+
+  function applyTheme(theme) {
+    updateThemeUI(theme);
   }
 
 
@@ -645,10 +709,7 @@
       .addEventListener('click', () => hideTerminal(true));
 
     // Toggle de tema
-    document.getElementById('btn-theme-toggle').addEventListener('click', () => {
-      const current = document.documentElement.dataset.theme || 'dark';
-      applyTheme(current === 'dark' ? 'light' : 'dark');
-    });
+    document.getElementById('btn-theme-toggle').addEventListener('click', toggleTheme);
 
     // Esc: fecha painel detalhe | T: toggle terminal | L: toggle tema
     document.addEventListener('keydown', e => {
@@ -656,8 +717,7 @@
       if (document.activeElement.tagName === 'INPUT') return;
       if (e.key === 't' || e.key === 'T') toggleTerminalVisible();
       if (e.key === 'l' || e.key === 'L') {
-        const current = document.documentElement.dataset.theme || 'dark';
-        applyTheme(current === 'dark' ? 'light' : 'dark');
+        toggleTheme();
       }
     });
   }

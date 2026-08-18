@@ -329,10 +329,54 @@ body {
   color: var(--accent);
 }
 
+/* Avatar na Sidebar */
+#sidebar-avatar {
+  padding: 10px 0; /* Removido padding lateral e borda superior */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#app-avatar {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 0;
+  object-fit: contain;
+  transition: opacity var(--transition), filter var(--transition);
+  -webkit-user-drag: none;
+  
+  /* Máscara para suavizar as bordas da imagem e fundir com o fundo */
+  mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 10%, 
+    black 90%, 
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 10%, 
+    black 90%, 
+    transparent 100%
+  );
+}
+
+/* Ajustes específicos para o modo Dark */
+[data-theme="dark"] #app-avatar {
+  filter: brightness(0.85) contrast(1.1) saturate(0.9);
+  /* Tenta misturar os pixels pretos da imagem com o fundo da sidebar */
+  mix-blend-mode: lighten; 
+}
+
+/* No modo Light, mantemos a imagem mais vibrante */
+[data-theme="light"] #app-avatar {
+  filter: brightness(1) contrast(1);
+}
+
 /* Busca */
 #sidebar-search {
   padding: 8px 6px;
-  border-top: 1px solid var(--border);
+  /* Borda superior removida para integrar com o avatar acima */
 }
 
 #search-wrapper {
@@ -1016,4 +1060,21 @@ body {
   background: var(--bg-hover);
   color: var(--text-primary);
   border-color: var(--scrollbar-hover);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VIEW TRANSITIONS (Dark/Light Circle Reveal)
+══════════════════════════════════════════════════════════ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
 }
