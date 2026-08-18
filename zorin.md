@@ -67,6 +67,9 @@ npm install
 npm run rebuild
 ```
 
+> **📌 Nota sobre Python / `requirements.txt`:**  
+> O projeto **não exige** `requirements.txt` nem instalação de pacotes `pip` externos para rodar a aplicação. Os agentes utilizam o `python3` nativo do sistema operacional (bibliotecas padrão como `decimal`, `math`, `json`, `sys`) para a execução de cálculos contábeis. Basta ter o Python 3 instalado no Zorin OS (`sudo apt install python3`).
+
 ---
 
 ### 4. Executar a Aplicação em Modo de Desenvolvimento
